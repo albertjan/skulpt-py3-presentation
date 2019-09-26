@@ -1,0 +1,1114 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
+    <link rel="stylesheet" href="node_modules/xterm/dist/xterm.css" />
+
+    <style>
+        .reveal section img {
+            margin: 0px 0px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 0px solid #fff;
+            box-shadow: initial;
+        }
+    </style>
+
+    <script src="node_modules/xterm/dist/xterm.js"></script>
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+
+    <script src="bower_components/skulpt/skulpt.js"></script>
+    <script src="bower_components/skulpt/skulpt-stdlib.js"></script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section data-markdown>
+                <script type="text/template">
+                    ### `from __past__ import print_statement`
+
+                    updating the grammar of skulpt to python3 while maintaining backwards compatibility with python2
+
+                    [<span class="fa fa-twitter"></span> @ajpnijburg](https://twitter.com/ajpnijburg) &#8212; [<span class="fa fa-github"></span> @albertjan](https://github.com/albertjan)
+                </script>
+            </section>
+
+            <section data-markdown>
+                <script type="text/template">
+                    ## What is skulpt
+                </script>
+            </section>
+
+            <section data-markdown>
+                <script type="text/template">
+                        A
+                        - python interpreter written in javascript
+                        - port of the python compiler in javascript
+
+                        Note:
+                        - well almost an interpreter, we're not eval-ing as we compile
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## Used by
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ![anvil](img/u-anvil.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ![trinket](img/u-trinket.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ![runestone](img/u-runestone.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ![runestone](img/u-rice.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ![runestone](img/u-drchuck.svg)
+                </script>
+            </section>
+
+
+            <!-- <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## `why = WHY_NOT;`
+
+                        Note:
+
+                        - I've always been intruiged by compilers
+                        - started with running validation on frontend and backend in the same language
+                        - was picked up by a few big MOOC's
+                        - trinket.io started (I freelance for them from time to time)
+                        - anvil.works started (They presented on skulpt and anvil at last py-london meetup at babylonhealth)
+                </script>
+            </section> -->
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## Update to python3
+
+                        Ugly truths:
+
+                        1. python 2 is eol (almost)
+                        2. skulpt's users have large user code bases on python2
+                        3. you can't branch and maintain two versions of skulpt with such a small team
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## How to keep python 2 (a bit)
+
+                        Note:
+
+                        This is from a language perspective. We had to change a lot ofcourse
+                        esp. around the compiler and the ast.
+                </script>
+            </section>
+
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                    ## print statement
+
+                    ![print statement](img/print.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/templatef">
+                    ## except changes
+
+                    ![print statement](img/except.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                    ## raise changes
+
+                    ![print statement](img/raise.png)
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                    ## tokenizer changes
+
+                    4. modify the tokenizer to optionally ignore the `o` in octal numbers
+                        - `01234` in python2 is `0o1234` in python3
+                    5. modify the tokenizer to optionally ignore the `L` suffix
+                        - there are no longs in python3
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## How
+
+                        ![step1](img/step1.png)
+
+                        ```
+                        def test(a, *, b):
+                            print a, b
+                        ```
+
+                        Note:
+
+                        A compiler in hyper speed!
+                        Point out the printstatement.
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                    ## tokenize
+
+                    ![step2](img/step2.png)
+
+
+```
+[ 'T_ENCODING', '' ],
+[ 'T_NAME', 'def' ],
+[ 'T_NAME', 'test' ],
+[ 'T_OP', '(' ],
+[ 'T_NAME', 'a' ],
+[ 'T_OP', ',' ],
+[ 'T_OP', '*' ],
+[ 'T_OP', ',' ],
+[ 'T_NAME', 'b' ],
+[ 'T_OP', ')' ],
+[ 'T_OP', ':' ],
+[ 'T_NEWLINE', '\n' ],
+[ 'T_INDENT', 'print a, b\n' ],
+[ 'T_NAME', 'print' ],
+[ 'T_NAME', 'a' ],
+[ 'T_OP', ',' ],
+[ 'T_NAME', 'b' ],
+[ 'T_NEWLINE', '\n' ],
+[ 'T_NL', '\n' ],
+[ 'T_DEDENT', '' ],
+[ 'T_ENDMARKER', '' ]
+```
+                </script>
+            </section>
+
+            <section data-separator-notes="^Note:">
+                <h2>Parse Tree</h2>
+                    <img src="img/step3.png"/>
+
+                    <svg width="400pt" height="360pt"
+                    viewBox="0.00 0.00 1299.76 977.63" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                   <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 973.6252)">
+                   <title>G</title>
+                   <polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-973.6252 1295.7624,-973.6252 1295.7624,4 -4,4"/>
+                   <!-- file_input -->
+                   <g id="node1" class="node">
+                   <title>file_input</title>
+                   <ellipse fill="none" stroke="#000000" cx="448.3058" cy="-951.6252" rx="48.6733" ry="18"/>
+                   <text text-anchor="middle" x="448.3058" y="-947.4252" font-family="Times,serif" font-size="14.00" fill="#000000">file_input</text>
+                   </g>
+                   <!-- stmt -->
+                   <g id="node2" class="node">
+                   <title>stmt</title>
+                   <ellipse fill="none" stroke="#000000" cx="384.3058" cy="-879.6252" rx="27.8442" ry="18"/>
+                   <text text-anchor="middle" x="384.3058" y="-875.4252" font-family="Times,serif" font-size="14.00" fill="#000000">stmt</text>
+                   </g>
+                   <!-- file_input&#45;&gt;stmt -->
+                   <g id="edge1" class="edge">
+                   <title>file_input&#45;&gt;stmt</title>
+                   <path fill="none" stroke="#000000" d="M432.8132,-934.196C424.523,-924.8696 414.1974,-913.2533 405.2062,-903.1382"/>
+                   <polygon fill="#000000" stroke="#000000" points="407.6055,-900.5692 398.3459,-895.4204 402.3736,-905.2198 407.6055,-900.5692"/>
+                   </g>
+                   <!-- T_ENDMARKER -->
+                   <g id="node36" class="node">
+                   <title>T_ENDMARKER</title>
+                   <ellipse fill="none" stroke="#000000" cx="513.3058" cy="-879.6252" rx="82.8264" ry="18"/>
+                   <text text-anchor="middle" x="513.3058" y="-875.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_ENDMARKER</text>
+                   </g>
+                   <!-- file_input&#45;&gt;T_ENDMARKER -->
+                   <g id="edge35" class="edge">
+                   <title>file_input&#45;&gt;T_ENDMARKER</title>
+                   <path fill="none" stroke="#000000" d="M464.0405,-934.196C471.9858,-925.395 481.772,-914.5549 490.5231,-904.8614"/>
+                   <polygon fill="#000000" stroke="#000000" points="493.1613,-907.1622 497.2644,-897.3941 487.9654,-902.4714 493.1613,-907.1622"/>
+                   </g>
+                   <!-- compound_stmt -->
+                   <g id="node3" class="node">
+                   <title>compound_stmt</title>
+                   <ellipse fill="none" stroke="#000000" cx="384.3058" cy="-807.6252" rx="73.0402" ry="18"/>
+                   <text text-anchor="middle" x="384.3058" y="-803.4252" font-family="Times,serif" font-size="14.00" fill="#000000">compound_stmt</text>
+                   </g>
+                   <!-- stmt&#45;&gt;compound_stmt -->
+                   <g id="edge2" class="edge">
+                   <title>stmt&#45;&gt;compound_stmt</title>
+                   <path fill="none" stroke="#000000" d="M384.3058,-861.4566C384.3058,-853.7562 384.3058,-844.5996 384.3058,-836.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="387.8059,-836.0385 384.3058,-826.0385 380.8059,-836.0385 387.8059,-836.0385"/>
+                   </g>
+                   <!-- funcdef -->
+                   <g id="node4" class="node">
+                   <title>funcdef</title>
+                   <ellipse fill="none" stroke="#000000" cx="384.3058" cy="-735.6252" rx="40.5499" ry="18"/>
+                   <text text-anchor="middle" x="384.3058" y="-731.4252" font-family="Times,serif" font-size="14.00" fill="#000000">funcdef</text>
+                   </g>
+                   <!-- compound_stmt&#45;&gt;funcdef -->
+                   <g id="edge3" class="edge">
+                   <title>compound_stmt&#45;&gt;funcdef</title>
+                   <path fill="none" stroke="#000000" d="M384.3058,-789.4566C384.3058,-781.7562 384.3058,-772.5996 384.3058,-764.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="387.8059,-764.0385 384.3058,-754.0385 380.8059,-764.0385 387.8059,-764.0385"/>
+                   </g>
+                   <!-- T_NAME_def -->
+                   <g id="node5" class="node">
+                   <title>T_NAME_def</title>
+                   <ellipse fill="none" stroke="#000000" cx="90.3058" cy="-663.6252" rx="67.1984" ry="18"/>
+                   <text text-anchor="middle" x="90.3058" y="-659.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_def</text>
+                   </g>
+                   <!-- funcdef&#45;&gt;T_NAME_def -->
+                   <g id="edge4" class="edge">
+                   <title>funcdef&#45;&gt;T_NAME_def</title>
+                   <path fill="none" stroke="#000000" d="M348.5495,-726.8686C299.22,-714.7879 209.641,-692.8502 150.0477,-678.2559"/>
+                   <polygon fill="#000000" stroke="#000000" points="150.5652,-674.7793 140.0197,-675.8001 148.9001,-681.5784 150.5652,-674.7793"/>
+                   </g>
+                   <!-- T_NAME_test -->
+                   <g id="node6" class="node">
+                   <title>T_NAME_test</title>
+                   <ellipse fill="none" stroke="#000000" cx="244.3058" cy="-663.6252" rx="68.3575" ry="18"/>
+                   <text text-anchor="middle" x="244.3058" y="-659.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_test</text>
+                   </g>
+                   <!-- funcdef&#45;&gt;T_NAME_test -->
+                   <g id="edge5" class="edge">
+                   <title>funcdef&#45;&gt;T_NAME_test</title>
+                   <path fill="none" stroke="#000000" d="M357.6433,-721.9131C336.982,-711.2873 308.0161,-696.3905 284.5395,-684.3169"/>
+                   <polygon fill="#000000" stroke="#000000" points="286.0065,-681.1356 275.5129,-679.6746 282.805,-687.3606 286.0065,-681.1356"/>
+                   </g>
+                   <!-- parameters -->
+                   <g id="node7" class="node">
+                   <title>parameters</title>
+                   <ellipse fill="none" stroke="#000000" cx="384.3058" cy="-663.6252" rx="53.2859" ry="18"/>
+                   <text text-anchor="middle" x="384.3058" y="-659.4252" font-family="Times,serif" font-size="14.00" fill="#000000">parameters</text>
+                   </g>
+                   <!-- funcdef&#45;&gt;parameters -->
+                   <g id="edge6" class="edge">
+                   <title>funcdef&#45;&gt;parameters</title>
+                   <path fill="none" stroke="#000000" d="M384.3058,-717.4566C384.3058,-709.7562 384.3058,-700.5996 384.3058,-692.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="387.8059,-692.0385 384.3058,-682.0385 380.8059,-692.0385 387.8059,-692.0385"/>
+                   </g>
+                   <!-- T_COLON -->
+                   <g id="node18" class="node">
+                   <title>T_COLON</title>
+                   <ellipse fill="none" stroke="#000000" cx="510.3058" cy="-663.6252" rx="55.0362" ry="18"/>
+                   <text text-anchor="middle" x="510.3058" y="-659.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_COLON</text>
+                   </g>
+                   <!-- funcdef&#45;&gt;T_COLON -->
+                   <g id="edge17" class="edge">
+                   <title>funcdef&#45;&gt;T_COLON</title>
+                   <path fill="none" stroke="#000000" d="M409.1993,-721.4003C427.6917,-710.8333 453.2005,-696.2568 473.9689,-684.3892"/>
+                   <polygon fill="#000000" stroke="#000000" points="475.8935,-687.3206 482.8394,-679.3203 472.4205,-681.2429 475.8935,-687.3206"/>
+                   </g>
+                   <!-- suite_func -->
+                   <g id="node19" class="node">
+                   <title>suite_func</title>
+                   <ellipse fill="none" stroke="#000000" cx="763.3058" cy="-663.6252" rx="51.0242" ry="18"/>
+                   <text text-anchor="middle" x="763.3058" y="-659.4252" font-family="Times,serif" font-size="14.00" fill="#000000">suite_func</text>
+                   </g>
+                   <!-- funcdef&#45;&gt;suite_func -->
+                   <g id="edge18" class="edge">
+                   <title>funcdef&#45;&gt;suite_func</title>
+                   <path fill="none" stroke="#000000" d="M421.683,-728.5245C488.705,-715.7921 629.6189,-689.0222 707.9055,-674.1498"/>
+                   <polygon fill="#000000" stroke="#000000" points="708.8881,-677.5258 718.0592,-672.2209 707.5816,-670.6488 708.8881,-677.5258"/>
+                   </g>
+                   <!-- T_LPAR -->
+                   <g id="node8" class="node">
+                   <title>T_LPAR</title>
+                   <ellipse fill="none" stroke="#000000" cx="197.3058" cy="-591.6252" rx="46.3875" ry="18"/>
+                   <text text-anchor="middle" x="197.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_LPAR</text>
+                   </g>
+                   <!-- parameters&#45;&gt;T_LPAR -->
+                   <g id="edge7" class="edge">
+                   <title>parameters&#45;&gt;T_LPAR</title>
+                   <path fill="none" stroke="#000000" d="M349.1325,-650.0826C318.1258,-638.1442 272.8705,-620.7197 239.8376,-608.0011"/>
+                   <polygon fill="#000000" stroke="#000000" points="241.0279,-604.709 230.4381,-604.3821 238.5127,-611.2415 241.0279,-604.709"/>
+                   </g>
+                   <!-- typedargslist -->
+                   <g id="node9" class="node">
+                   <title>typedargslist</title>
+                   <ellipse fill="none" stroke="#000000" cx="322.3058" cy="-591.6252" rx="60.2691" ry="18"/>
+                   <text text-anchor="middle" x="322.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">typedargslist</text>
+                   </g>
+                   <!-- parameters&#45;&gt;typedargslist -->
+                   <g id="edge8" class="edge">
+                   <title>parameters&#45;&gt;typedargslist</title>
+                   <path fill="none" stroke="#000000" d="M369.2973,-646.196C361.7377,-637.4172 352.431,-626.6094 344.0999,-616.9345"/>
+                   <polygon fill="#000000" stroke="#000000" points="346.5684,-614.4373 337.3909,-609.1435 341.264,-619.005 346.5684,-614.4373"/>
+                   </g>
+                   <!-- T_RPAR -->
+                   <g id="node17" class="node">
+                   <title>T_RPAR</title>
+                   <ellipse fill="none" stroke="#000000" cx="447.3058" cy="-591.6252" rx="46.969" ry="18"/>
+                   <text text-anchor="middle" x="447.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_RPAR</text>
+                   </g>
+                   <!-- parameters&#45;&gt;T_RPAR -->
+                   <g id="edge16" class="edge">
+                   <title>parameters&#45;&gt;T_RPAR</title>
+                   <path fill="none" stroke="#000000" d="M399.5563,-646.196C407.3721,-637.2637 417.0258,-626.2309 425.6032,-616.4281"/>
+                   <polygon fill="#000000" stroke="#000000" points="428.2446,-618.7245 432.1957,-608.8939 422.9766,-614.1149 428.2446,-618.7245"/>
+                   </g>
+                   <!-- tfpdef_a -->
+                   <g id="node10" class="node">
+                   <title>tfpdef_a</title>
+                   <ellipse fill="none" stroke="#000000" cx="59.3058" cy="-519.6252" rx="43.4183" ry="18"/>
+                   <text text-anchor="middle" x="59.3058" y="-515.4252" font-family="Times,serif" font-size="14.00" fill="#000000">tfpdef_a</text>
+                   </g>
+                   <!-- typedargslist&#45;&gt;tfpdef_a -->
+                   <g id="edge9" class="edge">
+                   <title>typedargslist&#45;&gt;tfpdef_a</title>
+                   <path fill="none" stroke="#000000" d="M276.3712,-579.8015C268.35,-577.7402 260.0853,-575.6186 252.3058,-573.6252 189.6528,-557.5716 173.2522,-556.2196 111.3058,-537.6252 108.1948,-536.6914 104.9929,-535.6881 101.7791,-534.6503"/>
+                   <polygon fill="#000000" stroke="#000000" points="102.7747,-531.2931 92.1814,-531.4681 100.5718,-537.9374 102.7747,-531.2931"/>
+                   </g>
+                   <!-- T_COMMA_1 -->
+                   <g id="node12" class="node">
+                   <title>T_COMMA_1</title>
+                   <ellipse fill="none" stroke="#000000" cx="189.3058" cy="-519.6252" rx="68.9448" ry="18"/>
+                   <text text-anchor="middle" x="189.3058" y="-515.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_COMMA_1</text>
+                   </g>
+                   <!-- typedargslist&#45;&gt;T_COMMA_1 -->
+                   <g id="edge11" class="edge">
+                   <title>typedargslist&#45;&gt;T_COMMA_1</title>
+                   <path fill="none" stroke="#000000" d="M293.1184,-575.8245C274.0681,-565.5116 248.9776,-551.9288 228.2356,-540.7"/>
+                   <polygon fill="#000000" stroke="#000000" points="229.807,-537.5708 219.3466,-535.8879 226.4745,-543.7266 229.807,-537.5708"/>
+                   </g>
+                   <!-- T_STAR -->
+                   <g id="node13" class="node">
+                   <title>T_STAR</title>
+                   <ellipse fill="none" stroke="#000000" cx="322.3058" cy="-519.6252" rx="46.3875" ry="18"/>
+                   <text text-anchor="middle" x="322.3058" y="-515.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_STAR</text>
+                   </g>
+                   <!-- typedargslist&#45;&gt;T_STAR -->
+                   <g id="edge12" class="edge">
+                   <title>typedargslist&#45;&gt;T_STAR</title>
+                   <path fill="none" stroke="#000000" d="M322.3058,-573.4566C322.3058,-565.7562 322.3058,-556.5996 322.3058,-548.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="325.8059,-548.0385 322.3058,-538.0385 318.8059,-548.0385 325.8059,-548.0385"/>
+                   </g>
+                   <!-- T_COMMA_2 -->
+                   <g id="node14" class="node">
+                   <title>T_COMMA_2</title>
+                   <ellipse fill="none" stroke="#000000" cx="455.3058" cy="-519.6252" rx="68.9448" ry="18"/>
+                   <text text-anchor="middle" x="455.3058" y="-515.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_COMMA_2</text>
+                   </g>
+                   <!-- typedargslist&#45;&gt;T_COMMA_2 -->
+                   <g id="edge13" class="edge">
+                   <title>typedargslist&#45;&gt;T_COMMA_2</title>
+                   <path fill="none" stroke="#000000" d="M351.4932,-575.8245C370.5435,-565.5116 395.6339,-551.9288 416.3759,-540.7"/>
+                   <polygon fill="#000000" stroke="#000000" points="418.1371,-543.7266 425.2649,-535.8879 414.8046,-537.5708 418.1371,-543.7266"/>
+                   </g>
+                   <!-- tfpdef_b -->
+                   <g id="node15" class="node">
+                   <title>tfpdef_b</title>
+                   <ellipse fill="none" stroke="#000000" cx="586.3058" cy="-519.6252" rx="43.5022" ry="18"/>
+                   <text text-anchor="middle" x="586.3058" y="-515.4252" font-family="Times,serif" font-size="14.00" fill="#000000">tfpdef_b</text>
+                   </g>
+                   <!-- typedargslist&#45;&gt;tfpdef_b -->
+                   <g id="edge14" class="edge">
+                   <title>typedargslist&#45;&gt;tfpdef_b</title>
+                   <path fill="none" stroke="#000000" d="M367.9463,-579.6716C375.7376,-577.6446 383.7522,-575.568 391.3058,-573.6252 454.3614,-557.4078 470.8768,-556.1084 533.3058,-537.6252 536.6209,-536.6437 540.0382,-535.5874 543.4653,-534.496"/>
+                   <polygon fill="#000000" stroke="#000000" points="544.6523,-537.7903 553.0728,-531.3602 542.4803,-531.1358 544.6523,-537.7903"/>
+                   </g>
+                   <!-- T_NAME_a -->
+                   <g id="node11" class="node">
+                   <title>T_NAME_a</title>
+                   <ellipse fill="none" stroke="#000000" cx="59.3058" cy="-447.6252" rx="59.1122" ry="18"/>
+                   <text text-anchor="middle" x="59.3058" y="-443.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_a</text>
+                   </g>
+                   <!-- tfpdef_a&#45;&gt;T_NAME_a -->
+                   <g id="edge10" class="edge">
+                   <title>tfpdef_a&#45;&gt;T_NAME_a</title>
+                   <path fill="none" stroke="#000000" d="M59.3058,-501.4566C59.3058,-493.7562 59.3058,-484.5996 59.3058,-476.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="62.8059,-476.0385 59.3058,-466.0385 55.8059,-476.0385 62.8059,-476.0385"/>
+                   </g>
+                   <!-- T_NAME_b -->
+                   <g id="node16" class="node">
+                   <title>T_NAME_b</title>
+                   <ellipse fill="none" stroke="#000000" cx="586.3058" cy="-447.6252" rx="59.6955" ry="18"/>
+                   <text text-anchor="middle" x="586.3058" y="-443.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_b</text>
+                   </g>
+                   <!-- tfpdef_b&#45;&gt;T_NAME_b -->
+                   <g id="edge15" class="edge">
+                   <title>tfpdef_b&#45;&gt;T_NAME_b</title>
+                   <path fill="none" stroke="#000000" d="M586.3058,-501.4566C586.3058,-493.7562 586.3058,-484.5996 586.3058,-476.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="589.8059,-476.0385 586.3058,-466.0385 582.8059,-476.0385 589.8059,-476.0385"/>
+                   </g>
+                   <!-- T_NEWLINE_func -->
+                   <g id="node20" class="node">
+                   <title>T_NEWLINE_func</title>
+                   <ellipse fill="none" stroke="#000000" cx="600.3058" cy="-591.6252" rx="87.9452" ry="18"/>
+                   <text text-anchor="middle" x="600.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_NEWLINE_func</text>
+                   </g>
+                   <!-- suite_func&#45;&gt;T_NEWLINE_func -->
+                   <g id="edge19" class="edge">
+                   <title>suite_func&#45;&gt;T_NEWLINE_func</title>
+                   <path fill="none" stroke="#000000" d="M731.1022,-649.4003C706.9509,-638.7323 673.5483,-623.9777 646.5442,-612.0496"/>
+                   <polygon fill="#000000" stroke="#000000" points="647.8466,-608.7987 637.285,-607.9596 645.0182,-615.2018 647.8466,-608.7987"/>
+                   </g>
+                   <!-- T_INDENT -->
+                   <g id="node21" class="node">
+                   <title>T_INDENT</title>
+                   <ellipse fill="none" stroke="#000000" cx="763.3058" cy="-591.6252" rx="57.8849" ry="18"/>
+                   <text text-anchor="middle" x="763.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_INDENT</text>
+                   </g>
+                   <!-- suite_func&#45;&gt;T_INDENT -->
+                   <g id="edge20" class="edge">
+                   <title>suite_func&#45;&gt;T_INDENT</title>
+                   <path fill="none" stroke="#000000" d="M763.3058,-645.4566C763.3058,-637.7562 763.3058,-628.5996 763.3058,-620.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="766.8059,-620.0385 763.3058,-610.0385 759.8059,-620.0385 766.8059,-620.0385"/>
+                   </g>
+                   <!-- stmt_func -->
+                   <g id="node22" class="node">
+                   <title>stmt_func</title>
+                   <ellipse fill="none" stroke="#000000" cx="888.3058" cy="-591.6252" rx="49.8175" ry="18"/>
+                   <text text-anchor="middle" x="888.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">stmt_func</text>
+                   </g>
+                   <!-- suite_func&#45;&gt;stmt_func -->
+                   <g id="edge21" class="edge">
+                   <title>suite_func&#45;&gt;stmt_func</title>
+                   <path fill="none" stroke="#000000" d="M790.1214,-648.1794C808.4109,-637.6447 832.8314,-623.5785 852.742,-612.11"/>
+                   <polygon fill="#000000" stroke="#000000" points="854.6161,-615.0696 861.5345,-607.0455 851.1222,-609.0039 854.6161,-615.0696"/>
+                   </g>
+                   <!-- T_DEDENT -->
+                   <g id="node35" class="node">
+                   <title>T_DEDENT</title>
+                   <ellipse fill="none" stroke="#000000" cx="1016.3058" cy="-591.6252" rx="60.2537" ry="18"/>
+                   <text text-anchor="middle" x="1016.3058" y="-587.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_DEDENT</text>
+                   </g>
+                   <!-- suite_func&#45;&gt;T_DEDENT -->
+                   <g id="edge34" class="edge">
+                   <title>suite_func&#45;&gt;T_DEDENT</title>
+                   <path fill="none" stroke="#000000" d="M803.3944,-652.2166C846.4514,-639.9632 915.0927,-620.4289 962.7507,-606.8662"/>
+                   <polygon fill="#000000" stroke="#000000" points="963.925,-610.1711 972.5851,-604.0675 962.0089,-603.4384 963.925,-610.1711"/>
+                   </g>
+                   <!-- simple_stmt -->
+                   <g id="node23" class="node">
+                   <title>simple_stmt</title>
+                   <ellipse fill="none" stroke="#000000" cx="888.3058" cy="-519.6252" rx="58.0016" ry="18"/>
+                   <text text-anchor="middle" x="888.3058" y="-515.4252" font-family="Times,serif" font-size="14.00" fill="#000000">simple_stmt</text>
+                   </g>
+                   <!-- stmt_func&#45;&gt;simple_stmt -->
+                   <g id="edge22" class="edge">
+                   <title>stmt_func&#45;&gt;simple_stmt</title>
+                   <path fill="none" stroke="#000000" d="M888.3058,-573.4566C888.3058,-565.7562 888.3058,-556.5996 888.3058,-548.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="891.8059,-548.0385 888.3058,-538.0385 884.8059,-548.0385 891.8059,-548.0385"/>
+                   </g>
+                   <!-- small_stmt -->
+                   <g id="node24" class="node">
+                   <title>small_stmt</title>
+                   <ellipse fill="none" stroke="#000000" cx="808.3058" cy="-447.6252" rx="53.3437" ry="18"/>
+                   <text text-anchor="middle" x="808.3058" y="-443.4252" font-family="Times,serif" font-size="14.00" fill="#000000">small_stmt</text>
+                   </g>
+                   <!-- simple_stmt&#45;&gt;small_stmt -->
+                   <g id="edge23" class="edge">
+                   <title>simple_stmt&#45;&gt;small_stmt</title>
+                   <path fill="none" stroke="#000000" d="M869.3469,-502.5622C858.9854,-493.2369 845.9906,-481.5415 834.6568,-471.3412"/>
+                   <polygon fill="#000000" stroke="#000000" points="836.9029,-468.6539 827.1286,-464.5657 832.2202,-473.857 836.9029,-468.6539"/>
+                   </g>
+                   <!-- T_NEWLINE_print -->
+                   <g id="node34" class="node">
+                   <title>T_NEWLINE_print</title>
+                   <ellipse fill="none" stroke="#000000" cx="968.3058" cy="-447.6252" rx="88.6063" ry="18"/>
+                   <text text-anchor="middle" x="968.3058" y="-443.4252" font-family="Times,serif" font-size="14.00" fill="#000000">T_NEWLINE_print</text>
+                   </g>
+                   <!-- simple_stmt&#45;&gt;T_NEWLINE_print -->
+                   <g id="edge33" class="edge">
+                   <title>simple_stmt&#45;&gt;T_NEWLINE_print</title>
+                   <path fill="none" stroke="#000000" d="M907.2647,-502.5622C917.4009,-493.4396 930.0573,-482.0489 941.2133,-472.0085"/>
+                   <polygon fill="#000000" stroke="#000000" points="943.556,-474.6089 948.6475,-465.3176 938.8732,-469.4058 943.556,-474.6089"/>
+                   </g>
+                   <!-- print_stmt -->
+                   <g id="node25" class="node">
+                   <title>print_stmt</title>
+                   <ellipse fill="none" stroke="#000000" cx="808.3058" cy="-375.6252" rx="50.9793" ry="18"/>
+                   <text text-anchor="middle" x="808.3058" y="-371.4252" font-family="Times,serif" font-size="14.00" fill="#000000">print_stmt</text>
+                   </g>
+                   <!-- small_stmt&#45;&gt;print_stmt -->
+                   <g id="edge24" class="edge">
+                   <title>small_stmt&#45;&gt;print_stmt</title>
+                   <path fill="none" stroke="#000000" d="M808.3058,-429.4566C808.3058,-421.7562 808.3058,-412.5996 808.3058,-404.0419"/>
+                   <polygon fill="#000000" stroke="#000000" points="811.8059,-404.0385 808.3058,-394.0385 804.8059,-404.0385 811.8059,-404.0385"/>
+                   </g>
+                   <!-- T_NAME_print -->
+                   <g id="node26" class="node">
+                   <title>T_NAME_print</title>
+                   <ellipse fill="none" stroke="#000000" cx="477.3058" cy="-232.8126" rx="73.0171" ry="18"/>
+                   <text text-anchor="middle" x="477.3058" y="-228.6126" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_print</text>
+                   </g>
+                   <!-- print_stmt&#45;&gt;T_NAME_print -->
+                   <g id="edge25" class="edge">
+                   <title>print_stmt&#45;&gt;T_NAME_print</title>
+                   <path fill="none" stroke="#000000" d="M761.1909,-368.7956C699.1896,-359.2277 594.1141,-340.8394 560.3058,-321.6252 533.3344,-306.2966 509.9706,-279.288 494.9645,-259.0674"/>
+                   <polygon fill="#000000" stroke="#000000" points="497.7443,-256.9383 489.0589,-250.8709 492.0649,-261.0303 497.7443,-256.9383"/>
+                   </g>
+                   <!-- test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a,xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, term_a, \nfactor_a, power_a\n atom_expr_a -->
+                   <g id="node27" class="node">
+                   <title>test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a,xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, term_a, \nfactor_a, power_a\n atom_expr_a</title>
+                   <ellipse fill="none" stroke="#000000" cx="688.3058" cy="-232.8126" rx="119.192" ry="88.6256"/>
+                   <text text-anchor="middle" x="688.3058" y="-279.0126" font-family="Times,serif" font-size="14.00" fill="#000000">test_a ,or_test_a,</text>
+                   <text text-anchor="middle" x="688.3058" y="-262.2126" font-family="Times,serif" font-size="14.00" fill="#000000"> not_test_a, comparison_a,</text>
+                   <text text-anchor="middle" x="688.3058" y="-245.4126" font-family="Times,serif" font-size="14.00" fill="#000000"> expr_a,xor_expr_a,</text>
+                   <text text-anchor="middle" x="688.3058" y="-228.6126" font-family="Times,serif" font-size="14.00" fill="#000000"> and_expr_a, shift_expr_a, </text>
+                   <text text-anchor="middle" x="688.3058" y="-211.8126" font-family="Times,serif" font-size="14.00" fill="#000000">arith_expr_a, term_a, </text>
+                   <text text-anchor="middle" x="688.3058" y="-195.0126" font-family="Times,serif" font-size="14.00" fill="#000000">factor_a, power_a</text>
+                   <text text-anchor="middle" x="688.3058" y="-178.2126" font-family="Times,serif" font-size="14.00" fill="#000000"> atom_expr_a</text>
+                   </g>
+                   <!-- print_stmt&#45;&gt;test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a,xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, term_a, \nfactor_a, power_a\n atom_expr_a -->
+                   <g id="edge26" class="edge">
+                   <title>print_stmt&#45;&gt;test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a,xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, term_a, \nfactor_a, power_a\n atom_expr_a</title>
+                   <path fill="none" stroke="#000000" d="M793.5914,-358.1136C784.3406,-347.1041 771.656,-332.0082 758.2914,-316.1028"/>
+                   <polygon fill="#000000" stroke="#000000" points="760.8007,-313.6486 751.688,-308.2441 755.4415,-318.1518 760.8007,-313.6486"/>
+                   </g>
+                   <!-- T_COMMA_print_stmt -->
+                   <g id="node30" class="node">
+                   <title>T_COMMA_print_stmt</title>
+                   <ellipse fill="none" stroke="#000000" cx="929.3058" cy="-232.8126" rx="103.6932" ry="18"/>
+                   <text text-anchor="middle" x="929.3058" y="-228.6126" font-family="Times,serif" font-size="14.00" fill="#000000">T_COMMA_print_stmt</text>
+                   </g>
+                   <!-- print_stmt&#45;&gt;T_COMMA_print_stmt -->
+                   <g id="edge29" class="edge">
+                   <title>print_stmt&#45;&gt;T_COMMA_print_stmt</title>
+                   <path fill="none" stroke="#000000" d="M823.1428,-358.1136C844.2548,-333.1957 883.1031,-287.3442 907.4958,-258.5543"/>
+                   <polygon fill="#000000" stroke="#000000" points="910.1717,-260.8103 913.9657,-250.918 904.8309,-256.2852 910.1717,-260.8103"/>
+                   </g>
+                   <!-- test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b,xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, term_b, \nfactor_b, power_b\n atom_expr_b -->
+                   <g id="node31" class="node">
+                   <title>test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b,xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, term_b, \nfactor_b, power_b\n atom_expr_b</title>
+                   <ellipse fill="none" stroke="#000000" cx="1171.3058" cy="-232.8126" rx="120.4133" ry="88.6256"/>
+                   <text text-anchor="middle" x="1171.3058" y="-279.0126" font-family="Times,serif" font-size="14.00" fill="#000000">test_b ,or_test_b,</text>
+                   <text text-anchor="middle" x="1171.3058" y="-262.2126" font-family="Times,serif" font-size="14.00" fill="#000000"> not_test_b, comparison_b,</text>
+                   <text text-anchor="middle" x="1171.3058" y="-245.4126" font-family="Times,serif" font-size="14.00" fill="#000000"> expr_b,xor_expr_b,</text>
+                   <text text-anchor="middle" x="1171.3058" y="-228.6126" font-family="Times,serif" font-size="14.00" fill="#000000"> and_expr_b, shift_expr_b, </text>
+                   <text text-anchor="middle" x="1171.3058" y="-211.8126" font-family="Times,serif" font-size="14.00" fill="#000000">arith_expr_b, term_b, </text>
+                   <text text-anchor="middle" x="1171.3058" y="-195.0126" font-family="Times,serif" font-size="14.00" fill="#000000">factor_b, power_b</text>
+                   <text text-anchor="middle" x="1171.3058" y="-178.2126" font-family="Times,serif" font-size="14.00" fill="#000000"> atom_expr_b</text>
+                   </g>
+                   <!-- print_stmt&#45;&gt;test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b,xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, term_b, \nfactor_b, power_b\n atom_expr_b -->
+                   <g id="edge30" class="edge">
+                   <title>print_stmt&#45;&gt;test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b,xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, term_b, \nfactor_b, power_b\n atom_expr_b</title>
+                   <path fill="none" stroke="#000000" d="M856.5897,-369.8828C905.1125,-362.8852 981.2565,-348.5135 1042.3058,-321.6252 1054.6203,-316.2015 1066.9945,-309.5557 1078.945,-302.3632"/>
+                   <polygon fill="#000000" stroke="#000000" points="1080.8964,-305.2717 1087.565,-297.0389 1077.2178,-299.3162 1080.8964,-305.2717"/>
+                   </g>
+                   <!-- atom_a -->
+                   <g id="node28" class="node">
+                   <title>atom_a</title>
+                   <ellipse fill="none" stroke="#000000" cx="688.3058" cy="-90" rx="39.4254" ry="18"/>
+                   <text text-anchor="middle" x="688.3058" y="-85.8" font-family="Times,serif" font-size="14.00" fill="#000000">atom_a</text>
+                   </g>
+                   <!-- test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a,xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, term_a, \nfactor_a, power_a\n atom_expr_a&#45;&gt;atom_a -->
+                   <g id="edge27" class="edge">
+                   <title>test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a,xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, term_a, \nfactor_a, power_a\n atom_expr_a&#45;&gt;atom_a</title>
+                   <path fill="none" stroke="#000000" d="M688.3058,-143.9913C688.3058,-134.8926 688.3058,-126.1956 688.3058,-118.5417"/>
+                   <polygon fill="#000000" stroke="#000000" points="691.8059,-118.4827 688.3058,-108.4827 684.8059,-118.4828 691.8059,-118.4827"/>
+                   </g>
+                   <!-- T_NAME_a_var -->
+                   <g id="node29" class="node">
+                   <title>T_NAME_a_var</title>
+                   <ellipse fill="none" stroke="#000000" cx="688.3058" cy="-18" rx="76.4285" ry="18"/>
+                   <text text-anchor="middle" x="688.3058" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_a_var</text>
+                   </g>
+                   <!-- atom_a&#45;&gt;T_NAME_a_var -->
+                   <g id="edge28" class="edge">
+                   <title>atom_a&#45;&gt;T_NAME_a_var</title>
+                   <path fill="none" stroke="#000000" d="M688.3058,-71.8314C688.3058,-64.131 688.3058,-54.9743 688.3058,-46.4166"/>
+                   <polygon fill="#000000" stroke="#000000" points="691.8059,-46.4132 688.3058,-36.4133 684.8059,-46.4133 691.8059,-46.4132"/>
+                   </g>
+                   <!-- atom_b -->
+                   <g id="node32" class="node">
+                   <title>atom_b</title>
+                   <ellipse fill="none" stroke="#000000" cx="1171.3058" cy="-90" rx="40.0089" ry="18"/>
+                   <text text-anchor="middle" x="1171.3058" y="-85.8" font-family="Times,serif" font-size="14.00" fill="#000000">atom_b</text>
+                   </g>
+                   <!-- test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b,xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, term_b, \nfactor_b, power_b\n atom_expr_b&#45;&gt;atom_b -->
+                   <g id="edge31" class="edge">
+                   <title>test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b,xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, term_b, \nfactor_b, power_b\n atom_expr_b&#45;&gt;atom_b</title>
+                   <path fill="none" stroke="#000000" d="M1171.3058,-143.9913C1171.3058,-134.8926 1171.3058,-126.1956 1171.3058,-118.5417"/>
+                   <polygon fill="#000000" stroke="#000000" points="1174.8059,-118.4827 1171.3058,-108.4827 1167.8059,-118.4828 1174.8059,-118.4827"/>
+                   </g>
+                   <!-- T_NAME_b_var -->
+                   <g id="node33" class="node">
+                   <title>T_NAME_b_var</title>
+                   <ellipse fill="none" stroke="#000000" cx="1171.3058" cy="-18" rx="77.012" ry="18"/>
+                   <text text-anchor="middle" x="1171.3058" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">T_NAME_b_var</text>
+                   </g>
+                   <!-- atom_b&#45;&gt;T_NAME_b_var -->
+                   <g id="edge32" class="edge">
+                   <title>atom_b&#45;&gt;T_NAME_b_var</title>
+                   <path fill="none" stroke="#000000" d="M1171.3058,-71.8314C1171.3058,-64.131 1171.3058,-54.9743 1171.3058,-46.4166"/>
+                   <polygon fill="#000000" stroke="#000000" points="1174.8059,-46.4132 1171.3058,-36.4133 1167.8059,-46.4133 1174.8059,-46.4132"/>
+                   </g>
+                   </g>
+                   </svg>
+
+                <aside class="notes">
+                    <a href="img/tree.png">as image</a>
+                </aside>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                    ## Abstract Syntax Tree
+                    ![step4](img/step4.png)
+
+```
+Module {
+    body:
+     [ FunctionDef {
+         name:
+          { v: 'test' },
+         args:
+          arguments_ {
+            args:
+             [ arg {
+                 arg:
+                  { v: 'a' },
+                 annotation: null } ],
+            vararg: null,
+            kwonlyargs:
+             [ arg {
+                 arg:
+                  { v: 'b' },
+                 annotation: null } ],
+            kw_defaults: [ null ],
+            kwarg: null,
+            defaults: [] },
+         body:
+          [ Print {
+              dest: null,
+              values:
+               [ Name {
+                   id: { v: 'a' },
+                   ctx: [Function: Load],
+                   lineno: 2,
+                   col_offset: 10 },
+                 Name {
+                   id: { v: 'b' },
+                   ctx: [Function: Load],
+                   lineno: 2,
+                   col_offset: 13 } ],
+              nl: true,
+              lineno: 2,
+              col_offset: 4 } ],
+         decorator_list: [],
+         returns: null,
+         docstring: null,
+         lineno: 1,
+         col_offset: 0,
+         scopeId: 1 } ],
+    docstring: undefined,
+    scopeId: 0 }
+
+
+```
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                    ## Symbol Table
+
+                    ![step4](img/step5.png)
+
+```
+SymbolTable {
+    filename: 'test.py',
+    global: { test: 2050 },
+    curClass: null,
+    tmpname: 0,
+    stss:
+     { '0':
+        SymbolTableScope {
+          symFlags: { test: 2050 },
+          name: 'top',
+          varnames: [],
+          children:
+           [ SymbolTableScope {
+               symFlags: { a: 2060, b: 2060 },
+               name: 'test',
+               varnames: [ 'a', 'b' ],
+               blockType: 'function',} ],
+          blockType: 'module' },
+       '1':
+        SymbolTableScope {
+          symFlags: { a: 2060, b: 2060 },
+          name: 'test',
+          varnames: [ 'a', 'b' ],
+          blockType: 'function' } } }
+```
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## Code
+
+                        ![step6](img/step6.png)
+
+```
+$compiledmod = function() {
+    var $scope10 = (function($forcegbl) {
+        var $gbl = $forcegbl || {},
+            $blk = 0,
+            $exc = [],
+            $loc = $gbl,
+            $cell = {},
+            $err = undefined;
+        $loc.__file__ = new Sk.builtins.str('test.py');
+        var $ret = undefined,
+            $postfinally = undefined,
+            $currLineNo = undefined,
+            $currColNo = undefined;
+        while (true) {
+            try {
+                switch ($blk) {
+                    case 0:
+                        /* --- module entry --- */
+                        //
+                        // line 1:
+                        // def test(a, *, b):
+                        // ^
+                        //
+                        $currLineNo = 1;
+                        $currColNo = 0;
+
+                        $scope11.co_name = new Sk.builtins['str']('test');
+                        $scope11.co_argcount = 1;
+                        $scope11.co_kwonlyargcount = 1;
+                        $scope11.$kwdefs = [undefined];
+                        $scope11.co_varnames = ['a', 'b'];
+                        var $funcobj13 = new Sk.builtins['function']($scope11, $gbl);
+                        $loc.test = $funcobj13;
+                        return $loc;
+                        throw new Sk.builtin.SystemError('internal error: unterminated block');
+                }
+            } catch (err) {
+                if (!(err instanceof Sk.builtin.BaseException)) {
+                    err = new Sk.builtin.ExternalError(err);
+                }
+                err.traceback.push({
+                    lineno: $currLineNo,
+                    colno: $currColNo,
+                    filename: 'test.py'
+                });
+                if ($exc.length > 0) {
+                    $err = err;
+                    $blk = $exc.pop();
+                    continue;
+                } else {
+                    throw err;
+                }
+            }
+        }
+    });
+    var $scope11 = (function $test12$(a, b) {
+        var a, b;
+        var $blk = 0,
+            $exc = [],
+            $loc = {},
+            $cell = {},
+            $gbl = this,
+            $err = undefined,
+            $ret = undefined,
+            $postfinally = undefined,
+            $currLineNo = undefined,
+            $currColNo = undefined;
+        while (true) {
+            try {
+                switch ($blk) {
+                    case 0:
+                        /* --- codeobj entry --- */
+                        if (a === undefined) {
+                            throw new Sk.builtin.UnboundLocalError('local variable \'a\' referenced before assignment');
+                        }
+                        if (b === undefined) {
+                            throw new Sk.builtin.UnboundLocalError('local variable \'b\' referenced before assignment');
+                        }
+
+                        //
+                        // line 2:
+                        //     print a, b
+                        //     ^
+                        //
+                        $currLineNo = 2;
+                        $currColNo = 4;
+
+                        if (a === undefined) {
+                            throw new Sk.builtin.UnboundLocalError('local variable \'a\' referenced before assignment');
+                        }
+                        $ret = Sk.misceval.print_(new Sk.builtins['str'](a).v);
+                        $blk = 1; /* allowing case fallthrough */
+                    case 1:
+                        if (b === undefined) {
+                            throw new Sk.builtin.UnboundLocalError('local variable \'b\' referenced before assignment');
+                        }
+                        $ret = Sk.misceval.print_(new Sk.builtins['str'](b).v);
+                        $blk = 2; /* allowing case fallthrough */
+                    case 2:
+                        $ret = Sk.misceval.print_("\n");
+                        $blk = 3; /* allowing case fallthrough */
+                    case 3:
+                        return Sk.builtin.none.none$;
+                        throw new Sk.builtin.SystemError('internal error: unterminated block');
+                }
+            } catch (err) {
+                if (!(err instanceof Sk.builtin.BaseException)) {
+                    err = new Sk.builtin.ExternalError(err);
+                }
+                err.traceback.push({
+                    lineno: $currLineNo,
+                    colno: $currColNo,
+                    filename: 'test.py'
+                });
+                if ($exc.length > 0) {
+                    $err = err;
+                    $blk = $exc.pop();
+                    continue;
+                } else {
+                    throw err;
+                }
+            }
+        }
+    });
+    return $scope10;
+}();
+```
+                </script>
+            </section>
+
+            <section data-markdown data-separator-notes="^Note:">
+                <script type="text/template">
+                        ## Where are we now
+
+                        - we're back where we started
+                        - everything still works (as far as we can tell with tests)
+                        - a lot of work remains on python 3 functionality
+
+                        Note:
+
+                        - But with the ability to work on python3 features
+                        - We're still finding bugs ofcourse
+                        - f-strings baby!
+                        - async functions
+                </script>
+            </section>
+
+
+            <section data-state="repl">
+                <h2>In action</h2>
+
+                <div id="repl" style="width: 800px; height: 600px; padding-left: 80px;"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        var repl = undefined;
+        Reveal.addEventListener('repl', function () {
+            if (repl) { return; }
+            repl = new Terminal();
+            repl.open(document.getElementById('repl'));
+            var disposable = null
+            Sk.configure({
+                output: (s) => repl.write(s.replace('\n', '\r\n')),
+                read: (file) => {
+                    console.log(file);
+                    if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[file] === undefined) {
+                        throw "File not found: '" + file + "'";
+                    }
+                    return Sk.builtinFiles.files[file];
+                },
+                retainglobals: true,
+                __future__: Object.assign(Sk.python3, { print_function: false })
+            })
+
+            var compilableLines = [],
+                //finds lines starting with "print"
+                re = new RegExp("\\s*print"),
+                //finds import statements
+                importre = new RegExp("\\s*import"),
+                //finds multuline string constants
+                mls = new RegExp("'''"),
+                //finds defining statements
+                defre = new RegExp("def.*|class.*"),
+                //test for empty line.
+                emptyline = new RegExp("^\\s*$"),
+                comment = new RegExp("^#.*"),
+                //a regex to check if a line is an assignment
+                //this regex checks whether or not a line starts with
+                //an identifier followed with some whitspace and then an = and then some more white space.
+                //it also checks if the identifier is a tuple.
+                assignment = /^((\s*\(\s*(\s*((\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*)|(\s*\(\s*(\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*,)*\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*\)\s*))\s*,)*\s*((\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*)|(\s*\(\s*(\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*,)*\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*\)\s*))\s*\)\s*)|(\s*\s*(\s*((\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*)|(\s*\(\s*(\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*,)*\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*\)\s*))\s*,)*\s*((\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*)|(\s*\(\s*(\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*,)*\s*((\s*[_a-zA-Z]\w*\s*)|(\s*\(\s*(\s*[_a-zA-Z]\w*\s*,)*\s*[_a-zA-Z]\w*\s*\)\s*))\s*\)\s*))\s*\s*))([+-/*%&\^\|]?|[/<>*]{2})=/,
+                lines = [],
+                origLines;
+
+            repl.writeln("Python 3.7(ish) (skulpt, " + new Date().toDateString() + ")");
+            repl.writeln("[" + navigator.appName + " " + navigator.appVersion + "] on a system");
+            repl.writeln('Don\'t type "help", "copyright", "credits" or "license" unless you\'ve assigned something to them');
+            repl.write('>>> ');
+
+            let line = "";
+
+            repl.on('key', function (key, ev) {
+                const printable = !ev.altKey && !ev.altGraphKey && !ev.ctrlKey && !ev.metaKey;
+                if (ev.keyCode == 38 || ev.keyCode == 40) {
+                    // ignore up and down keys
+                    return;
+                }
+
+                if (ev.keyCode == 37) {
+                    if (repl._core.buffer.x > 4) {
+                        repl.write(key);
+                    }
+                } else if (ev.keyCode == 13) {
+                    repl.write('\r\n');
+                    loop(line).then(() => {
+                        line = "";
+                        repl.write(isBalanced(lines) ? '>>> ' : '... ');
+                    });
+                } else if (ev.keyCode === 8) {
+                    // Do not delete the prompt
+                    if (repl._core.buffer.x > 4) {
+                        repl.write('\b \b');
+                        line = line.substring(0, line.length - 1);
+                    }
+                } else if (printable) {
+                    line += key;
+                    repl.write(key);
+                }
+            });
+
+            function isBalanced(lines) {
+                var depth = 0,
+                    mlsopened = false,
+                    l;
+
+                for (l = 0; l < lines.length; l = l + 1) {
+                    if (lines[l] !== undefined) {
+                        if (lines[l].match(/'''/) !== null && lines[l].match(/'''/).length === 1) {
+                            mlsopened = !mlsopened;
+                        }
+                        if (!mlsopened && lines[l].substr(lines[l].length - 1) === ":") {
+                            depth = depth + 1;
+                        }
+                        if (!mlsopened && lines[l] === "" && depth > 0) {
+                            depth = 0;
+                        }
+                    }
+                }
+                return depth === 0 && !mlsopened;
+            }
+
+            function loop(line) {
+                lines.push(line);
+                //See if it is ready to be evaluated;
+                if (!isBalanced(lines)) { return Promise.resolve(); }
+
+                origLines = lines.slice();
+
+                //it's a one-liner
+                if (lines.length === 1) {
+                    //if it's a statement that should be printed (not containing an = or def or class or an empty line)
+                    if (!assignment.test(lines[0]) && !defre.test(lines[0]) && !importre.test(lines[0]) && !comment.test(lines[0]) && lines[0].length > 0) {
+                        //if it doesn't contain print make sure it doesn't print None
+                        if (!re.test(lines[0])) {
+                            //remove the statement
+                            //evaluate it if nessecary
+                            lines.push("evaluationresult = " + lines.pop());
+                            //print the result if not None
+                            lines.push("if not evaluationresult == None: print(repr(evaluationresult))");
+                        }
+                    }
+                }
+
+                return Promise.resolve().then(() => {
+                    //Evaluate
+                    if (!lines || /^\s*$/.test(lines)) {
+                        return;
+                    } else {
+                        return Sk.misceval
+                            .asyncToPromise(() => Sk.importMainWithBody("repl", false, lines.join('\n'), true))
+                            .catch(err => {
+                                if (err instanceof Sk.builtin.SystemExit) {
+                                    return;
+                                }
+
+                                repl.writeln(err.toString());
+
+                                var index = -1;
+                                //find the line number
+                                if ((index = err.toString().indexOf("on line")) !== -1) {
+                                    index = parseInt(err.toString().substr(index + 8), 10);
+                                }
+                                var line = 0;
+                                //print the accumulated code with a ">" before the broken line.
+                                //Don't add the last statement to the accumulated code
+                                repl.writeln(origLines.map(function (str) {
+                                    return ++line + (index === line ? ">" : " ") + ": " + str;
+                                }).join('\r\n'));
+                            })
+                            .finally(() => {
+                                lines = [];
+                            });
+                    }
+                });
+            }
+        });
+
+    </script>
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true }
+            ]
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+digraph G {
+    file_input->stmt
+    stmt->compound_stmt
+    compound_stmt->funcdef
+    funcdef->T_NAME_def
+    funcdef->T_NAME_test
+    funcdef->parameters
+    parameters->T_LPAR
+    parameters->typedargslist
+    typedargslist->tfpdef_a
+    tfpdef_a->T_NAME_a
+    typedargslist->T_COMMA_1
+    typedargslist->T_STAR
+    typedargslist->T_COMMA_2
+    typedargslist->tfpdef_b
+    tfpdef_b->T_NAME_b
+    parameters->T_RPAR
+    funcdef->T_COLON
+    funcdef->suite_func
+    suite_func->T_NEWLINE_func
+    suite_func->T_INDENT
+    suite_func->stmt_func
+    stmt_func->simple_stmt
+    simple_stmt->small_stmt
+    small_stmt->print_stmt
+    print_stmt->T_NAME_print
+    print_stmt->"test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a," +
+                "xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, " +
+                "term_a, \nfactor_a, power_a\n atom_expr_a"
+    "test_a ,or_test_a,\n not_test_a, comparison_a,\n expr_a," +
+                "xor_expr_a,\n and_expr_a, shift_expr_a, \narith_expr_a, " +
+                "term_a, \nfactor_a, power_a\n atom_expr_a"->atom_a
+    atom_a->T_NAME_a_var
+    print_stmt->T_COMMA_print_stmt
+    print_stmt->"test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b," +
+                "xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, " +
+                "term_b, \nfactor_b, power_b\n atom_expr_b"
+    "test_b ,or_test_b,\n not_test_b, comparison_b,\n expr_b," +
+                "xor_expr_b,\n and_expr_b, shift_expr_b, \narith_expr_b, " +
+                "term_b, \nfactor_b, power_b\n atom_expr_b"->atom_b
+    atom_b->T_NAME_b_var
+    simple_stmt->T_NEWLINE_print
+    suite_func->T_DEDENT
+    file_input->T_ENDMARKER
+}

@@ -1,0 +1,12 @@
+digraph G {
+    node [shape=box]
+    symtable [style=filled fillcolor=white]
+    parser [style=filled fillcolor=lightblue]
+    rankdir="LR"
+    source ->tokenizer [ label="string"];
+    tokenizer->parser [ label="tokens"];
+    parser->ast_build
+    parser->symtable [ label="parse tree"]
+    ast_build->compiler [ label="symbol table"]
+    symtable->compiler [ label="ast"];
+}
